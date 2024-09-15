@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta el clima de la ciudad requerida:</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 150px; /* Fija el ancho de las etiquetas */
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Imagen del logo de Reservamos -->
+    <img src="https://unicorn-cdn.b-cdn.net/5b42df99-17d2-470a-be9e-0592b04058af/reservamos-logo-azul.png" alt="Reservamos Logo" width="200">
+
+    <h1>Consulta el clima</h1>
+    <form action="{% url 'get_weather' %}" method="get">
+        <div class="form-group">
+            <label for="city">Ingrese la ciudad:</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="api_key">API key (opcional):</label>
+            <input type="text" id="api_key" name="api_key">
+        </div>
+        <div class="form-group">
+            <button type="submit">Consultar</button>
+        </div>
+    </form>
+</body>
+</html>

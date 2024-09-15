@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -17,7 +18,7 @@ class WeatherForecastAPIView(APIView, ):
         city_name = request.GET.get('city') # Se obtiene nombre de la petición GET.
         
         # openweather_api_key = 'a5a47c18197737e8eeca634cd6acb581' # API_KEY Proporcionada por 'R'.
-        openweather_api_key = request.GET.get('api_key', settings.OPENWEATHER_API_KEY) # Se obtiene el api_key de la petición, sino toma el valor por defecto del settings.
+        openweather_api_key = request.GET.get('api_key', None) or settings.OPENWEATHER_API_KEY # Se obtiene el api_key de la petición, sino toma el valor por defecto del settings.
         if not city_name:
             return Response({'error': 'City name is required'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -80,3 +81,6 @@ class WeatherForecastAPIView(APIView, ):
             return Response({'error': 'No valid cities found for weather forecast'}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({'results': forecast_results}, status=status.HTTP_200_OK)
+
+def weather_form_view(request):
+    return render(request, 'forecast/weather_form.html')
