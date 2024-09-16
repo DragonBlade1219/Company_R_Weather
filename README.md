@@ -17,7 +17,7 @@ Sigue estos pasos para configurar el proyecto localmente:
 1. **Clona el repositorio**:
 
    ```bash
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/DragonBlade1219/Company_R_Weather
    cd nombre_del_repositorio
    ```
 
