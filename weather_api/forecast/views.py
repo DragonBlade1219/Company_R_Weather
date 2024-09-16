@@ -14,11 +14,12 @@ from django.conf import settings
 class WeatherForecastAPIView(APIView, ):
     
     def get(self, request):
-        
-        city_name = request.GET.get('city') # Se obtiene nombre de la petición GET.
+        # Se obtiene nombre de la petición GET.
+        city_name = request.GET.get('city') 
         
         # openweather_api_key = 'a5a47c18197737e8eeca634cd6acb581' # API_KEY Proporcionada por 'R'.
-        openweather_api_key = request.GET.get('api_key', None) or settings.OPENWEATHER_API_KEY # Se obtiene el api_key de la petición, sino toma el valor por defecto del settings.
+        # Se obtiene el api_key de la petición, sino toma el valor por defecto del settings.
+        openweather_api_key = request.GET.get('api_key', None) or settings.OPENWEATHER_API_KEY 
         if not city_name:
             return Response({'error': 'City name is required'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -52,7 +53,6 @@ class WeatherForecastAPIView(APIView, ):
                         
                         # Crear un diccionario con el pronóstico de la ciudad
                         city_forecast = {
-                            'id' : city.get('id'),
                             'city': city.get('city_name'), 
                             'state': city.get('state'),
                             'country': city.get('country'),
@@ -82,5 +82,6 @@ class WeatherForecastAPIView(APIView, ):
 
         return Response({'results': forecast_results}, status=status.HTTP_200_OK)
 
+# Función para poder renderizar el html
 def weather_form_view(request):
     return render(request, 'forecast/weather_form.html')

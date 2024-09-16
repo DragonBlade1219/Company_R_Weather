@@ -19,6 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('forecast.urls')),  # Incluye las URLs de la aplicación "forecast"
-    path('', include('forecast.urls')),  # Incluye las URLs de tu aplicación
+    path('', include('forecast.urls')),  # Incluye las URLs del formulario en la raíz
+    path('api/', include('forecast.api_urls')),  # Incluye las URLs de la API bajo el prefijo /api/
 ]
