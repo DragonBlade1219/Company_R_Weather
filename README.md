@@ -18,7 +18,7 @@ Sigue estos pasos para configurar el proyecto localmente:
 
    ```bash
    git clone https://github.com/DragonBlade1219/Company_R_Weather
-   cd nombre_del_repositorio
+   cd Company_R_Weather
    ```
 
 2. **Crea y activa el entorno virtual**:
@@ -49,15 +49,18 @@ Sigue estos pasos para configurar el proyecto localmente:
 6. **Levanta el servidor local**:
 
    ```bash
+   cd weather_api
    python manage.py runserver
    ```
 
 7. **Accede a la vista**:
 
-   Abre tu navegador y ve a la dirección: [http://127.0.0.1:8000/weather](http://127.0.0.1:8000/weather)
+   Abre tu navegador y ve a la dirección: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ## Vista de Endpoint
-- **Vista para fines prácticos y uso de otra api_key**:
+**Vista para fines prácticos y uso de otra api_key**:
+    Se incluyó una vista de usuario para realizar pruebas en navegador de manera más simple en la raíz del dominio de despliegue, en esta se brinda el input de la ciudad y un input para usar una api_key adicional de manera opcional.
+
 ## Endpoint principal
 
 - **Endpoint para consultar el clima**:
@@ -75,6 +78,7 @@ Sigue estos pasos para configurar el proyecto localmente:
   ```bash
   curl "http://127.0.0.1:8000/api/weather/?city=monterrey&api_key=tu_api_key"
   ```
+  - Como se menciona, el atributo "api_key=tu_api_key" puede omitirse, ya que es parte de la funcionalidad opcional de la vista de usuario.
 
   ### Ejemplo de respuesta:
   ```json
@@ -138,3 +142,35 @@ Sigue estos pasos para configurar el proyecto localmente:
 3. Realiza un commit de tus cambios (`git commit -m 'Añadir nueva funcionalidad'`).
 4. Realiza un push a la rama (`git push origin feature/nueva-funcionalidad`).
 5. Abre un Pull Request.
+
+## Estructura del proyecto con Django:
+```
+Company_R_Weather:
+
+├─ .gitignore
+├─ README.md
+├─ requirements.txt
+└─ weather_api
+   ├─ forecast
+   │  ├─ __init__.py
+   │  ├─ admin.py
+   │  ├─ api_urls.py # archivo de urls para ruta del endpoint principal solicitado.
+   │  ├─ apps.py
+   │  ├─ migrations
+   │  │  └─ __init__.py
+   │  ├─ models.py
+   │  ├─ templates
+   │  │  └─ forecast
+   │  │     └─ weather_form.html
+   │  ├─ tests.py
+   │  ├─ urls.py # archivo de urls para ruta del formulario de la vista de usuario.
+   │  └─ views.py # Vista con la lógica de funcionamiento de interacción con API's.
+   ├─ manage.py
+   └─ weather_api
+      ├─ __init__.py
+      ├─ asgi.py
+      ├─ settings.py #  Archivo de configuraciones de Django.
+      ├─ urls.py
+      └─ wsgi.py
+
+```
