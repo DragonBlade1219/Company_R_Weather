@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 # Create your views here.
 
@@ -8,8 +7,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime, timedelta, timezone
-from decouple import config
 from django.conf import settings
+from django.utils import timezone as tz
+from .models import APIRequestLog
+from django.db import connection
 
 class WeatherForecastAPIView(APIView, ):
     
@@ -80,8 +81,80 @@ class WeatherForecastAPIView(APIView, ):
         if not forecast_results:
             return Response({'error': 'No valid cities found for weather forecast'}, status=status.HTTP_404_NOT_FOUND)
 
+        process_api_response(openweather_api_key, forecast_results)
+        show_raw_api_requests(request)
+        
         return Response({'results': forecast_results}, status=status.HTTP_200_OK)
 
-# Función para poder renderizar el html
+# Función para poder renderizar el html:
 def weather_form_view(request):
     return render(request, 'forecast/weather_form.html')
+
+# Función de persistencia en BD:
+def process_api_response(api_key, forecast_results):
+    
+    city_data = forecast_results[0]
+
+    # Manejar el caso en que no haya resultados válidos
+    #print("La estructura de los datos no es la esperada: ")
+    #print(forecast_results.json())
+    #city_data = None  # O maneja el error de otra manera adecuada para tu lógica
+
+    # Extrae la información necesaria
+    city = city_data.get('city')
+    state = city_data.get('state', '')  # Opcional
+    country = city_data.get('country')
+
+    forecast_date = city_data['forecast'][0].get('date')
+    min_temp = city_data['forecast'][0].get('min_temp')
+    max_temp = city_data['forecast'][0].get('max_temp')
+
+    # Guarda la información en la base de datos
+    log = APIRequestLog(
+        request_time=tz.now(),
+        api_key=api_key,
+        city=city,
+        state=state,
+        country=country,
+        forecast_date=forecast_date,
+        min_temp=min_temp,
+        max_temp=max_temp
+    )
+    log.save()
+
+def execute_raw_query_1():
+    cities = ["Guadalajara", "Monterrey", "Cancun"]
+    placeholders = ', '.join(['%s'] * len(cities))
+    query = f"""
+             SELECT * 
+             FROM forecast_apirequestlog 
+             WHERE city IN ({placeholders});
+             """
+    with connection.cursor() as cursor:
+        cursor.execute(query, cities)
+        rows = cursor.fetchall()
+    return rows
+
+def execute_raw_query_2():
+    cities = ["Guadalajara", "Monterrey", "Cancun"]
+    logs = APIRequestLog.objects.filter(city__in=cities)
+    return logs
+    # return APIRequestLog.objects.all()
+
+def show_raw_api_requests(request):
+    logs_1 = execute_raw_query_1()
+    logs_2 = execute_raw_query_2()
+    print(f"Logs por Native SQL: {logs_1}")
+    print(f"Logs por ORM: {logs_2}")
+    # return render(request, 'raw_api_requests.html', {'logs': logs})
+    
+# def execute_raw_query_3():
+#     cities = ["Guadalajara", "Monterrey", "Cancun"]
+#     placeholders = ', '.join(['%s'] * len(cities))
+#     query = f"""
+#              SELECT * 
+#              FROM forecast_apirequestlog 
+#              WHERE city IN ({placeholders});
+#              """
+#     logs = APIRequestLog.objects.raw(query, cities)
+#     return logs
